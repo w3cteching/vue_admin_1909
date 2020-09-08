@@ -1,19 +1,3 @@
-# vue_admin
-
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
 # 后台管理
 
 > 技术栈：vue,Element ui,axios,sass(css),Echarts(图表),vuex.....
@@ -273,13 +257,93 @@ router.beforeEach((to, from, next) => {
 ```
 
 - 首页布局
+
     - el-container：布局容器
     - el-header：布局头部
     - el-aside：布局侧边栏
     - el-main：布局主体
+
 - 导航菜单
+
     - el-menu:导航菜单容器
+
+        ```
+        常用属性：
+        背景色：background-color
+        字体颜色：text-color
+        :unique-opened="true" 是否只展示一个子菜单项
+        :rouer="true"  开启路由模式
+        ```
+
+        
+
     - el-submenu：导航子菜单
+
     - el-menu-item：导航子菜单项
 
+- 面包屑导航
+
+```
+  <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+      <el-breadcrumb-item>用户列表</el-breadcrumb-item>
+    </el-breadcrumb>
+```
+
+- 表格
+    - el-table:表格
+        - data添加数据源
+
+```
+<el-table :data="数据源">
+</el-table>
+```
+
+
+
+- el-table-column：表格列
+
+```
+<el-table-column prop="要显示的字段" label="表头名"></el-table-column>
+
+如果对列的数据进行自定义操作，需要在el-table-column中内嵌template
+ <el-table-column label="状态">
+       <template slot-scope="scope">
+       </template>
+  </el-table-column>
+  
+  其中：slot-scope="要添加的数据源"  通过scope.row访问当前行
+```
+
+- 按钮和输入框
+    - el-button
+        - 通过type来指定按钮类型
+    - el-input
+- 分页器
+    - el-pagination
+
+```
+ <!-- 分页器 -->
+      <!-- 
+          常用分页属性和事件说明：
+          1.@size-change：当每页显示条数发生改变时就触发  即每页显示的条数
+          2.current-change:当前页码改变时触发   即当前第几页
+          3.current-page：表示当前页码
+          4.page-sizes：
+          5.layout="total（总条数）, sizes（每页条数数组）, prev（前一页）, pager（页码集合）, next（下一页）, jumper（跳转页码）"
+      -->
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="pageInfo.pagenum"
+        :page-sizes="[2, 4, 6]"
+        :page-size="pageInfo.pagesize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      ></el-pagination>
+```
+
+- 添加用户功能 
+    - 对话框组件：el-dialog
 
