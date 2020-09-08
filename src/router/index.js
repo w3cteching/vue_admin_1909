@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "@/views/login";
+import userList from '@/views/userlist'
 
 Vue.use(VueRouter);
 
@@ -17,7 +18,11 @@ const routes = [
     meta: {
       auth: true
     },
-    component: Home
+    component: Home,
+    children: [
+      {path:'',redirect: '/userlist'},
+      {path:'/userlist',component:userList}
+    ]
   }
 ];
 

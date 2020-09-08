@@ -94,7 +94,7 @@ export default {
 }
 
 .login_form {
-  width: 60%;
+  width: 40%;
   height: 260px;
   padding: 30px;
   background: #fff;

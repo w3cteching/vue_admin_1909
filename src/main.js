@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
+import moment from 'moment'
 
 Vue.config.productionTip = false;
 
@@ -31,6 +32,12 @@ router.beforeEach((to, from, next) => {
   }
   
 });
+
+//处理时间戳过滤器
+Vue.filter('dateTime', (v) => {
+   return moment(v*1000).format("YYYY-MM-DD")
+})
+
 
 new Vue({
   router,

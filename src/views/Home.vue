@@ -21,73 +21,84 @@
       <el-container>
         <el-aside width="200px" class="home_aside">
           <!-- 左侧栏 -->
-          <el-menu 
-              default-active="2" 
-              class="el-menu-vertical-demo"
-              :unique-opened="true"
-            >
+          <el-menu
+            default-active="1"
+            text-color="#fff"
+            background-color="#074a5f"
+            class="el-menu-vertical-demo nav_menu"
+            :unique-opened="true"
+            :router="true"
+          >
             <el-submenu index="1">
               <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>导航一</span>
+                <i class="el-icon-user-solid"></i>
+                <span>用户管理</span>
               </template>
-              <el-menu-item index="1-1">
-                  <i class="el-icon-location"></i>
-                选项1
-              </el-menu-item>
-              <el-menu-item index="1-1">
-                  <i class="el-icon-location"></i>
-                选项2
+              <el-menu-item index="/userlist">
+                <i class="el-icon-menu"></i>
+                用户列表
               </el-menu-item>
             </el-submenu>
 
-             <el-submenu index="2">
+            <el-submenu index="2">
               <template slot="title">
                 <i class="el-icon-location"></i>
-                <span>导航一</span>
+                <span>权限管理</span>
               </template>
-              <el-menu-item index="1-1">
-                  <i class="el-icon-location"></i>
-                选项1
+              <el-menu-item index="2-1">
+                 <i class="el-icon-menu"></i>
+                角色列表
               </el-menu-item>
-              <el-menu-item index="1-1">
-                  <i class="el-icon-location"></i>
-                选项2
+              <el-menu-item index="2-2">
+                 <i class="el-icon-menu"></i>
+                权限列表
               </el-menu-item>
             </el-submenu>
 
-             <el-submenu index="3">
+            <el-submenu index="3">
               <template slot="title">
                 <i class="el-icon-location"></i>
-                <span>导航一</span>
+                <span>商品管理</span>
               </template>
-              <el-menu-item index="1-1">
-                  <i class="el-icon-location"></i>
-                选项1
+              <el-menu-item index="3-1">
+                 <i class="el-icon-menu"></i>
+                商品列表
               </el-menu-item>
-              <el-menu-item index="1-1">
-                  <i class="el-icon-location"></i>
-                选项2
+              <el-menu-item index="3-2">
+                 <i class="el-icon-menu"></i>
+                分类参数
+              </el-menu-item>
+              <el-menu-item index="3-3">
+                 <i class="el-icon-menu"></i>
+                商品分类
               </el-menu-item>
             </el-submenu>
 
-             <el-submenu index="4">
+            <el-submenu index="4">
               <template slot="title">
                 <i class="el-icon-location"></i>
-                <span>导航一</span>
+                <span>订单管理</span>
               </template>
-              <el-menu-item index="1-1">
-                  <i class="el-icon-location"></i>
-                选项1
+              <el-menu-item index="4-1">
+                 <i class="el-icon-menu"></i>
+                订单列表
               </el-menu-item>
-              <el-menu-item index="1-1">
-                  <i class="el-icon-location"></i>
-                选项2
+            </el-submenu>
+            <el-submenu index="5">
+              <template slot="title">
+                <i class="el-icon-location"></i>
+                <span>数据统计</span>
+              </template>
+              <el-menu-item index="4-1">
+                 <i class="el-icon-menu"></i>
+                数据报表
               </el-menu-item>
             </el-submenu>
           </el-menu>
         </el-aside>
-        <el-main class="home_main">主体</el-main>
+        <el-main class="home_main">
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -135,6 +146,10 @@ export default {
 
 .home_aside {
   background: #07495f;
+  position: relative;
+  //top: 100px;
+  bottom: 0;
+  left: 0;
 }
 
 .home_main {
@@ -145,5 +160,10 @@ export default {
 .loginout {
   position: absolute;
   right: 20px;
+}
+
+.nav_menu {
+  height:100%;
+  overflow-y: scroll;
 }
 </style>
