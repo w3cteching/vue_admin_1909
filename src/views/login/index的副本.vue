@@ -1,7 +1,6 @@
 <template>
   <div class="login_wrap">
     <el-form
-      ref="login"
       class="login_form"
       label-position="right"
       label-width="80px"
@@ -15,7 +14,9 @@
       <el-form-item label="密码" prop="password">
         <el-input v-model="userinfo.password" type="password"></el-input>
       </el-form-item>
-      <el-button type="primary" class="login_btn" @click.prevent="handleLogin">登录</el-button>
+      <el-button type="primary" class="login_btn" @click.prevent="handleLogin"
+        >登录</el-button
+      >
     </el-form>
   </div>
 </template>
@@ -52,27 +53,34 @@ export default {
        *     跳转到首页，并给出成功的提示
        * 失败：给出错误提示，让用户重新登录
        */
+      const res = await login(this.userinfo);
+      const {
+        meta: { msg, status }
+      } = res.data;
 
-      this.$refs.login.validate(async valid => {
-        if (valid) {
-          const res = await login(this.userinfo);
-          console.log("lgggggggg", res);
+      if (status === 200) {
+        const { token } = res.data.data;
+        localStorage.setItem("token", token);
+        //记住上次没有token要访问的页面地址，如果登录成功，再返回到上次要访问到页面
+        const { redirect } = this.$route.query;
 
-          if (res.result) {
-            const { token } = res.result;
-            localStorage.setItem("token", token);
-            //记住上次没有token要访问的页面地址，如果登录成功，再返回到上次要访问到页面
-            const { redirect } = this.$route.query;
-
-            //如果直接登录，没有redirect,成功后直接跳转到home
-            if (!redirect) {
-              this.$router.push({ path: "/" });
-            } else {
-              this.$router.push({ path: redirect });
-            }
-          }
+        //如果直接登录，没有redirect,成功后直接跳转到home
+        if (!redirect) {
+          this.$router.push({ name: "Home" });
+        } else {
+          this.$router.push({ path: redirect });
         }
-      });
+
+        this.$message({
+          message: msg,
+          type: "success"
+        });
+      } else {
+        this.$message({
+          message: msg,
+          type: "error"
+        });
+      }
     }
   }
 };

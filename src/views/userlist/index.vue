@@ -3,7 +3,7 @@
   <div>
     <!-- 面包屑导航 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/' }">首页111</el-breadcrumb-item>
       <el-breadcrumb-item>用户管理</el-breadcrumb-item>
       <el-breadcrumb-item>用户列表</el-breadcrumb-item>
     </el-breadcrumb>
@@ -78,17 +78,18 @@
               <el-button
                 size="mini"
                 plain
-                type="success"
-                icon="el-icon-check"
-                circle
-              ></el-button>
-              <el-button
-                size="mini"
-                plain
                 type="danger"
                 icon="el-icon-delete"
                 circle
                 @click="openDeleteDialog(scope.row.id)"
+              ></el-button>
+              <el-button
+                size="mini"
+                plain
+                type="success"
+                icon="el-icon-check"
+                circle
+                @click="openUserRoleDialog(scope.row)"
               ></el-button>
             </el-row>
           </template>
@@ -167,12 +168,45 @@
           >
         </div>
       </el-dialog>
+
+      <!-- 打开分配角色对话框 -->
+      <el-dialog title="分配角色" :visible.sync="dialogFormRole">
+        <el-form :model="roleForm">
+          <div class="currentUsernfo">
+            <p>当前用户：{{ currentUser.username }}</p>
+            <p>当前角色：{{ currentUser.role_name }}</p>
+            <p>{{ roleForm.id }}</p>
+          </div>
+          <el-form-item label="分配角色" label-width="200">
+            <el-select v-model="roleForm.id" placeholder="请选择角色">
+              <el-option
+                v-for="(item, index) in roles"
+                :label="item.roleName"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormRole = false">取 消</el-button>
+          <el-button type="primary" @click="updateUserRole">确 定</el-button>
+        </div>
+      </el-dialog>
     </el-card>
   </div>
 </template>
 
 <script>
-import { userList, addUser, editUserInfo,deleteUser,updateUserStatus } from "@/http/api";
+import {
+  userList,
+  addUser,
+  editUserInfo,
+  deleteUser,
+  updateUserStatus,
+  getUserRoleList,
+  updateUserRole,
+  getUserRoleInfo
+} from "@/http/api";
 import _ from "lodash";
 export default {
   name: "userlist",
@@ -203,6 +237,16 @@ export default {
     //验证手机号的函数
 
     return {
+      //是否显示分配角色对话框
+      dialogFormRole: false,
+      //用户角色列表
+      roles: [],
+      //当前用户信息
+      currentUser: {},
+      roleForm: {
+        id: ""
+      },
+      currentRoleId: "",
       //是否显示用户编辑对话框
       isUserEdit: false,
       //添加用户表单验证规则
@@ -250,13 +294,45 @@ export default {
     this.getUserList();
   },
   methods: {
+    //确认更新->向后台更新角色
+    async updateUserRole() {
+      /**
+       * 第一步，先得到角色id
+       * 第二步,通过角色id查询角色名和角色描述
+       * 第三步：再调取修改角色接口，再更新当前用户角色
+       */
+
+      this.currentRoleId = this.roleForm.id;
+      const res = await getUserRoleInfo(this.currentRoleId);
+      // console.log('当前roleid对应的角色：',res)
+      const { roleName, roleDesc } = res.result;
+      // const result = await updateUserRole(this.currentRoleId, {
+      //   roleName,
+      //   roleDesc
+      // });
+
+        const result = await updateUserRole(this.currentUser.id, {rid:this.currentRoleId});
+      console.log('确认修改：',result)
+      this.getUserList();
+
+      this.dialogFormRole = false;
+    },
+    //打开分配用户角色对话框
+    async openUserRoleDialog(user) {
+      console.log("urer:", user);
+      this.currentUser = user;
+      this.dialogFormRole = true;
+      const res = await getUserRoleList();
+
+      console.log("用户角色列表：", res);
+      this.roles = res.result;
+    },
     //更新用户状态
     setUserState(user) {
       //  console.log(user)
-      const {id,mg_state}=user;
-      updateUserStatus(id,mg_state)
+      const { id, mg_state } = user;
+      updateUserStatus(id, mg_state);
       this.getUserList();
-
     },
     //打开删除提示框
     openDeleteDialog(userid) {
@@ -265,10 +341,10 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       })
-        .then(() => {
-         //调取删除接口
-          deleteUser(userid)
-          this.getUserList()
+        .then(async () => {
+          //调取删除接口
+          const res = await deleteUser(userid);
+          this.getUserList();
         })
         .catch(() => {
           this.$message({
@@ -375,5 +451,9 @@ export default {
 
 .addUserBtn {
   margin-left: 10px;
+}
+
+.currentUsernfo {
+  line-height: 30px;
 }
 </style>

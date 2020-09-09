@@ -66,17 +66,65 @@ export function editUserInfo(userid, data) {
 export function deleteUser(userid) {
   return request({
     url: `users/${userid}`,
-    method: 'DELETE'
-   })
+    method: "DELETE"
+  });
 }
- 
+
 /**
  * 更新用户状态
  */
 
-export function updateUserStatus(id,status) {
+export function updateUserStatus(id, status) {
   return request({
     url: `users/${id}/state/${status}`,
-    method: 'PUT'
-   })
- }
+    method: "PUT"
+  });
+}
+
+/**
+ * 用户角色列表
+ */
+
+export function getUserRoleList() {
+  return request({
+    url: `roles`,
+    method: "GET"
+  });
+}
+
+/**
+ * 修改角色
+ * 请求路径：roles/:id
+ * id：角色ID不能为空携带在url中
+ * roleName：角色名称不能为空
+ * roleDesc：角色描述可以为空
+ */
+
+// export function updateUserRole(roleid, data) {
+//   return request({
+//     url: `roles/${roleid}`,
+//     method: "PUT", //PUT和POST一样的提交参数
+//     data
+//   });
+// }
+
+export function updateUserRole(userid, data) {
+  return request({
+    url: `users/${userid}/role`,
+    method: "PUT", //PUT和POST一样的提交参数
+    data
+  });
+}
+
+/**
+ * 通过角色id查询角色
+ * 请求路径：roles/:id
+ * id：角色ID不能为空携带在url中
+ */
+
+export function getUserRoleInfo(roleid) {
+  return request({
+    url: `roles/${roleid}`,
+    method: "GET" //PUT和POST一样的提交参数
+  });
+}

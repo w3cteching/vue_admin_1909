@@ -28,6 +28,7 @@
             class="el-menu-vertical-demo nav_menu"
             :unique-opened="true"
             :router="true"
+            :default-openeds="['1']"
           >
             <el-submenu index="1">
               <template slot="title">
@@ -45,7 +46,7 @@
                 <i class="el-icon-location"></i>
                 <span>权限管理</span>
               </template>
-              <el-menu-item index="2-1">
+              <el-menu-item index="/rolelist">
                  <i class="el-icon-menu"></i>
                 角色列表
               </el-menu-item>
