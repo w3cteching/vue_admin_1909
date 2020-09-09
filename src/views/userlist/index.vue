@@ -60,11 +60,12 @@
               v-model="scope.row.mg_state"
               active-color="#13ce66"
               inactive-color="#ff4949"
+              @change="setUserState(scope.row)"
             ></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="150" align="center">
-          <template>
+          <template slot-scope="scope">
             <el-row>
               <el-button
                 size="mini"
@@ -72,6 +73,7 @@
                 type="primary"
                 icon="el-icon-edit"
                 circle
+                @click="openEditDialog(scope.row)"
               ></el-button>
               <el-button
                 size="mini"
@@ -86,6 +88,7 @@
                 type="danger"
                 icon="el-icon-delete"
                 circle
+                @click="openDeleteDialog(scope.row.id)"
               ></el-button>
             </el-row>
           </template>
@@ -137,12 +140,39 @@
           >
         </div>
       </el-dialog>
+
+      <!-- 编辑用户对话框 -->
+      <el-dialog title="编辑用户" :visible.sync="isUserEdit">
+        <el-form ref="editUserForm" :model="userinfo" :rules="rules">
+          <el-form-item label="用户名" label-width="100px" prop="username">
+            <el-input
+              disabled
+              v-model="userinfo.username"
+              autocomplete="off"
+            ></el-input>
+          </el-form-item>
+
+          <el-form-item label="邮箱" label-width="100px" prop="email">
+            <el-input v-model="userinfo.email" autocomplete="off"></el-input>
+          </el-form-item>
+
+          <el-form-item label="手机" label-width="100px" prop="mobile">
+            <el-input v-model="userinfo.mobile" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="isUserEdit = false">取 消</el-button>
+          <el-button type="primary" @click.prevent="editUserConfirm"
+            >确 定</el-button
+          >
+        </div>
+      </el-dialog>
     </el-card>
   </div>
 </template>
 
 <script>
-import { userList, addUser } from "@/http/api";
+import { userList, addUser, editUserInfo,deleteUser,updateUserStatus } from "@/http/api";
 import _ from "lodash";
 export default {
   name: "userlist",
@@ -173,6 +203,8 @@ export default {
     //验证手机号的函数
 
     return {
+      //是否显示用户编辑对话框
+      isUserEdit: false,
       //添加用户表单验证规则
       rules: {
         username: [
@@ -218,8 +250,59 @@ export default {
     this.getUserList();
   },
   methods: {
+    //更新用户状态
+    setUserState(user) {
+      //  console.log(user)
+      const {id,mg_state}=user;
+      updateUserStatus(id,mg_state)
+      this.getUserList();
+
+    },
+    //打开删除提示框
+    openDeleteDialog(userid) {
+      this.$confirm("删除用户?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+         //调取删除接口
+          deleteUser(userid)
+          this.getUserList()
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    //确定修改信息并提交到后端
+    editUserConfirm() {
+      this.$refs.editUserForm.validate(async valid => {
+        if (valid) {
+          //console.log(this.userinfo)
+          const userid = this.userinfo.id;
+          //向后台提交要编辑的数据
+          await editUserInfo(userid, this.userinfo);
+          this.getUserList();
+          this.isUserEdit = false;
+        }
+      });
+    },
+    //打开用户编辑对话框
+    openEditDialog(user) {
+      //console.log('user:',user)
+      // this.userinfo=JSON.parse(JSON.stringify(user));
+      //用lodash中的cloneDeep将user处理成深拷贝，不影响
+      this.userinfo = _.cloneDeep(user);
+      this.isUserEdit = true;
+    },
     //显示用户对话框
     addUserDialog() {
+      //进入时清空userinfo
+      this.userinfo = {};
+      //显示添加用户弹窗
       this.isUserDialog = true;
     },
     //确认添加用户
@@ -248,13 +331,11 @@ export default {
             email: "",
             mobile: ""
           };
-           this.isUserDialog = false;
+          this.isUserDialog = false;
         } else {
           return false;
         }
       });
-
-     
     },
     //搜索用户
     searchUsers: _.debounce(function() {
@@ -273,28 +354,11 @@ export default {
     //获取用户列表
     async getUserList() {
       const res = await userList(this.pageInfo);
-      const {
-        meta: { msg, status }
-      } = res.data;
-      if (status === 200) {
-        const {
-          data: { pagenum, total, users }
-        } = res.data;
+      const { pagenum, total, users } = res.result;
 
-        this.pageInfo.pagenum = pagenum;
-        this.userlist = users;
-        this.total = total;
-        this.$message({
-          message: msg,
-          type: "success"
-        });
-      } else {
-        this.$message({
-          message: msg,
-          type: "error"
-        });
-        return;
-      }
+      this.pageInfo.pagenum = pagenum;
+      this.userlist = users;
+      this.total = total;
     }
   }
 };
