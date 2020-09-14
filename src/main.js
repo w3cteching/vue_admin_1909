@@ -4,9 +4,20 @@ import router from "./router";
 import store from "./store";
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
-import moment from "moment";
 
+import * as filters from '@/filters'
 import BreadCrumb from "@/components/breadcrumb.vue";
+
+
+import VueQuillEditor from 'vue-quill-editor'
+ 
+// require styles
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+
+Vue.use(VueQuillEditor)
+ 
 
 Vue.config.productionTip = false;
 
@@ -37,10 +48,28 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-//处理时间戳过滤器
-Vue.filter("dateTime", v => {
-  return moment(v * 1000).format("YYYY-MM-DD");
-});
+
+Object.keys(filters).forEach((item, key) => {
+  Vue.filter(item,filters[item])
+})
+
+// //处理时间戳过滤器
+// Vue.filter("dateTime", v => {
+//   return moment(v * 1000).format("YYYY-MM-DD");
+// });
+
+// Vue.filter("levelRank", (num) => {
+ 
+//   let result = '';
+//   switch (num) {
+//     case '0': result = '一级'; break;
+//     case '1': result = '二级'; break;
+//     case '2': result = '三级'; break;
+//     default :result='没有等级'
+//   }
+
+//   return result;
+// })
 
 new Vue({
   router,

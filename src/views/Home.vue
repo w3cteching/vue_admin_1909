@@ -28,7 +28,6 @@
             class="el-menu-vertical-demo nav_menu"
             :unique-opened="true"
             :router="true"
-            :default-openeds="['1']"
           >
             <el-submenu index="1">
               <template slot="title">
@@ -50,7 +49,7 @@
                  <i class="el-icon-menu"></i>
                 角色列表
               </el-menu-item>
-              <el-menu-item index="2-2">
+              <el-menu-item index="/rightslist">
                  <i class="el-icon-menu"></i>
                 权限列表
               </el-menu-item>
@@ -61,7 +60,7 @@
                 <i class="el-icon-location"></i>
                 <span>商品管理</span>
               </template>
-              <el-menu-item index="3-1">
+              <el-menu-item index="/goodslist">
                  <i class="el-icon-menu"></i>
                 商品列表
               </el-menu-item>
@@ -90,7 +89,7 @@
                 <i class="el-icon-location"></i>
                 <span>数据统计</span>
               </template>
-              <el-menu-item index="4-1">
+              <el-menu-item index="/report">
                  <i class="el-icon-menu"></i>
                 数据报表
               </el-menu-item>
